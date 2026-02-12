@@ -3,15 +3,15 @@ import SwiftSoup
 import WebKit
 
 @MainActor
-public final class WebScrapper {
+public final class WebCrawler {
     final class NavigationDelegate: NSObject, WKNavigationDelegate {
-        weak var scrapper: WebScrapper?
+        weak var crawler: WebCrawler?
 
         public nonisolated func webView(_ webView: WKWebView, didFinish _: WKNavigation!) {
             Task { @MainActor in
                 let scrollToBottomScript = "window.scrollTo(0, document.body.scrollHeight);"
                 _ = try? await webView.evaluateJavaScript(scrollToBottomScript)
-                self.scrapper?.webViewDidFinishLoading = true
+                self.crawler?.webViewDidFinishLoading = true
             }
         }
 
@@ -21,8 +21,8 @@ public final class WebScrapper {
             withError error: Error
         ) {
             Task { @MainActor in
-                self.scrapper?.navigationError = error
-                self.scrapper?.webViewDidFinishLoading = true
+                self.crawler?.navigationError = error
+                self.crawler?.webViewDidFinishLoading = true
             }
         }
     }
@@ -33,7 +33,7 @@ public final class WebScrapper {
     var navigationError: (any Error)?
     let navigationDelegate: NavigationDelegate = .init()
 
-    enum WebScrapperError: Error, LocalizedError {
+    enum WebCrawlerError: Error, LocalizedError {
         case retry
         case navigationTimeout
 
@@ -81,7 +81,7 @@ public final class WebScrapper {
         """###
 
         let list = try? await WKContentRuleListStore.default().compileContentRuleList(
-            forIdentifier: "web-scrapping",
+            forIdentifier: "web-crawling",
             encodedContentRuleList: jsonRuleList
         )
 
@@ -107,7 +107,7 @@ public final class WebScrapper {
             configuration: configuration
         )
         self.webView = webView
-        navigationDelegate.scrapper = self
+        navigationDelegate.crawler = self
         webView.navigationDelegate = navigationDelegate
     }
 
@@ -127,7 +127,7 @@ public final class WebScrapper {
         }
 
         if !webViewDidFinishLoading {
-            throw WebScrapperError.navigationTimeout
+            throw WebCrawlerError.navigationTimeout
         }
 
         if let navigationError { throw navigationError }
@@ -158,10 +158,10 @@ public final class WebScrapper {
     func getHTML() async throws -> String {
         do {
             let isReady = try await webView.evaluateJavaScript(checkIfReady) as? Bool ?? false
-            if !isReady { throw WebScrapperError.retry }
+            if !isReady { throw WebCrawlerError.retry }
             return try await webView.evaluateJavaScript(getHTMLText) as? String ?? ""
         } catch {
-            throw WebScrapperError.retry
+            throw WebCrawlerError.retry
         }
     }
 }

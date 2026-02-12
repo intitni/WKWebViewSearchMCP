@@ -54,7 +54,7 @@ struct WKWebSearch: AsyncParsableCommand {
     struct Scrap: AsyncParsableCommand {
         static let configuration =
             CommandConfiguration(abstract: "Scrap the HTML content of a web page")
-        @Argument(help: "URL to scrap")
+        @Argument(help: "URL to crawl")
         var urlString: String
 
         func run() async throws {
@@ -69,7 +69,7 @@ struct WKWebSearch: AsyncParsableCommand {
     struct MCPServer: AsyncParsableCommand {
         static let configuration =
             CommandConfiguration(
-                abstract: "Start an MCP server over stdio exposing search and scrap tools"
+                abstract: "Start an MCP server over stdio exposing search and crawl tools"
             )
 
         @Option(
@@ -91,6 +91,10 @@ struct WKWebSearch: AsyncParsableCommand {
                 )
             )
 
+            await server.withMethodHandler(Ping.self) { _ in
+                Empty()
+            }
+
             // Register handlers on the server before starting
             await server.withMethodHandler(ListTools.self) { _ in
                 let tools = [
@@ -103,7 +107,7 @@ struct WKWebSearch: AsyncParsableCommand {
                                 "query": .object([
                                     "type": .string("string"),
                                     "description": "The search query",
-                                ])
+                                ]),
                             ]),
                             "required": ["query"],
                         ])
@@ -117,7 +121,7 @@ struct WKWebSearch: AsyncParsableCommand {
                                 "url": .object([
                                     "type": .string("string"),
                                     "description": "URL to read",
-                                ])
+                                ]),
                             ]),
                             "required": ["url"],
                         ])

@@ -102,7 +102,7 @@ public struct WebLoader: Sendable {
         if let downloadHTML {
             return try await downloadHTML(url, strategy, timeout)
         }
-        let html = try await WebScrapper().fetch(
+        let html = try await WebCrawler().fetch(
             url: url,
             validate: strategy.validate(_:),
             timeout: timeout

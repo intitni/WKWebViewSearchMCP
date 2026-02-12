@@ -19,8 +19,8 @@ struct HeadlessBrowserSearchService: SearchService, Sendable {
             URL(string: "https://www.bing.com/search?q=\(queryEncoded)")!
         }
 
-        let scrapper = await WebScrapper()
-        let html = try await scrapper.fetch(url: url) { document in
+        let crawler = await WebCrawler()
+        let html = try await crawler.fetch(url: url) { document in
             switch engine {
             case .google:
                 return GoogleSearchResultParser.validate(document: document)
