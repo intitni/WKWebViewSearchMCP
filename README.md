@@ -17,13 +17,13 @@ Requirements:
 To build the CLI using Swift Package Manager:
 
 ```sh
-swift build -C CLI
+swift build --package-path CLI -c release --product wk-web-search
 ```
 
 To run the CLI directly from the workspace:
 
 ```sh
-swift run -C CLI WKWebSearch <subcommand> [options]
+swift run --package-path CLI wk-web-search <subcommand> [options]
 ```
 
 ## Commands
