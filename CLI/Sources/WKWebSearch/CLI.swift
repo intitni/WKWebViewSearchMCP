@@ -9,7 +9,7 @@ import WKWebViewSearch
 struct WKWebSearch: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         abstract: "CLI for WKWebViewSearch operations",
-        subcommands: [Search.self, Scrap.self, MCPServer.self],
+        subcommands: [Search.self, Crawl.self, MCPServer.self],
         defaultSubcommand: Search.self
     )
 
@@ -51,9 +51,9 @@ struct WKWebSearch: AsyncParsableCommand {
         }
     }
 
-    struct Scrap: AsyncParsableCommand {
+    struct Crawl: AsyncParsableCommand {
         static let configuration =
-            CommandConfiguration(abstract: "Scrap the HTML content of a web page")
+            CommandConfiguration(abstract: "Crawl the HTML content of a web page")
         @Argument(help: "URL to crawl")
         var urlString: String
 
@@ -169,7 +169,7 @@ struct WKWebSearch: AsyncParsableCommand {
                         }
 
                         let result = Result(
-                            description: "Scraped web page of \(urlString)",
+                            description: "Crawled web page of \(urlString)",
                             webPages: content
                         )
                         let encoder = JSONEncoder()
@@ -178,7 +178,7 @@ struct WKWebSearch: AsyncParsableCommand {
                         let s = String(data: data, encoding: .utf8) ?? ""
                         return .init(content: [.text(s)], isError: false)
                     } catch {
-                        return .init(content: [.text("Scrap error: \(error)")], isError: true)
+                        return .init(content: [.text("Crawl error: \(error)")], isError: true)
                     }
 
                 default:
