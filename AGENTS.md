@@ -13,7 +13,7 @@ This document is a short contributor guide for WKWebViewSearchMCP. It explains t
 
 - Build library: `swift build --package-path WKWebViewSearch`
 - Build CLI: `swift build --package-path CLI`
-- Run CLI: `swift run --package-path CLI wk-web-searc <subcommands>`
+- Run CLI: `swift run --package-path CLI wk-web-search <subcommands>`
 - Run tests: `swift test --package-path WKWebViewSearch`
 
 Each `-C` runs the Swift tools from the package directory.
